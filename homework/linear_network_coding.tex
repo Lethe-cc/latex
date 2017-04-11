@@ -15,6 +15,7 @@
 \newtheorem{exam}{Example}
 \newtheorem{proof}{\hskip 2em Proof}
 \newtheorem{lemm}{Lemma}
+\newtheorem{rema}{Remark}
 
 \begin{document}
 \title{Linear Network Coding}
@@ -67,7 +68,7 @@ It has been proved in [1] that the information rate from the source to a set of 
 \par
 The remainder of the paper is organized as follows. In Section II, we introduce the basic notions, in particular, the notion of a \emph{linear-code multicast} (LCM). In Section III, we show that with a "generic" LCM, every node can simultaneously receive information from the source at rate equal to its max-flow bound. In Section IV, we describe the physical implementation of an LCM first when the network is acyclic and then when the network is cyclic. In Section V, we present a greedy algorithm for constructing a generic LCM for an acyclic network. The same algorithm can be applied to a cyclic network by expanding the network into an acyclic network. This results in a "timevarying" LCM, which, however, requires high complexity in implementation. In Section VI, we introduce the time-invariant LCM(TILCM) and present a heuristic for constructing a generic TILCM. Section VII presents concluding remarks.
 
-\section{BASIC NOTIONS}\label{sec:basic notions}
+\section{BASIC NOTIONS}\label{sec:basic}
 \par
 In this section, we first introduce some graph-theoretic terminology and notations which will be used throughout the paper. Then we will introduce the notion of an LCM, an abstract algebraic description of a linear code on a communication network.
 \par
@@ -147,7 +148,7 @@ Under this mechanism, the amount of information reaching a node $T$ is given by 
 \par 
 This corollary says that $\text{maxflow}(T)$ is an upper bound on the amount of information received by $T$ when an LCM is used.
 
-\section{ACHIEVING THE MAX-FLOW BOUND THROUGH A GENERIC LCM}\label{sec: ACHIEVING}
+\section{ACHIEVING THE MAX-FLOW BOUND THROUGH A GENERIC LCM}\label{sec: achieving}
 \par
 In this section, we derive a sufficient condition for an LCM $v$ to achieve the max-flow bound on $\text{dim}(v(T))$ in Proposition 2.3.
 \begin{defi}
@@ -174,6 +175,61 @@ if $v(X_1Y_1), v(X_2Y_2), \dots v(X_mY_m)$ are linearly independent, then $v(X_k
 	$$\text{dim}(v(T))=\text{maxflow}(T).$$
 \end{theo}
 \begin{proof}
-	Consider a node $T$ not equal to $S$. Let $f$ be the common value of $\text{maxflow){T}}$ and the minimum value of a cut between $S$ and $T$. The inequality $\text{dim}(v(T))\leq f$ follows from Proposition 2.3. Thus, we only have to show that $\text{dim}(v(T))\geq f$
+	Consider a node $T$ not equal to $S$. Let $f$ be the common value of $\text{maxflow){T}}$ and the minimum value of a cut between $S$ and $T$. The inequality $\text{dim}(v(T))\leq f$ follows from Proposition 2.3. Thus, we only have to show that $\text{dim}(v(T))\geq f$.
+	\par let $\text{dim}(C)=\text{dim}(\left \langle v(X,Y):X\in C \text{and} Y\notin C\right \rangle)$ for any cut $C$ between $S$ and $T$. We stil show that $\text{dim}(v(T)) \geq f$ by contradiction. Assume $\text{dim}(v(T)) < f$ and let $A$ be the collection of cuts $U$ between $S$ and $T$ such that $\text{dim}(U)<f$. Since $\text{dim}(v(T)) < f$ and let $A$ implies $V\setminus \{T\}\in A$, where $V$ is the set of all the nodes in $G$, $A$ is nonempty.
+	\par By the assumption that $v$ is a generic LCM, the number of edges out of $S$ is at least $d$, and $\text{dim}(\{S\})=d\geq f$. Therefore, $\{S\}\notin A$. Then there must exist a minimal member $U\in A$ in the sense that for any $Z\in U\setminus \{S\} \neq \emptyset$, $U\setminus \{Z\} \notin A$. Clearly, $U\neq \{S\}$ because $\{S\}\notin A$.
+	\par Let $K$ be the set of channels in cut $U$ and $B$ be the set of boundary nodes of $U$, i.e., $Z\in B$ if and only if $Z\in U$ and there 	is a channel $(Z,Y)$, such that $Y\notin U$. Then for all $W\in B$,
+	$$v(W)\nsubset \left \langle v(X,Y):(X,Y)\in K \right \rangle$$
+	which can be seen as follows. The set of channels in cut $U\setminus {W}$ but not in is given by $\left \{ (X,W):X\in U\setminus{W}\right \}$. Since $v$ is an LCM
+	$$\left \langle v(X,W): X\in U\setminus {W}\right \rangle \subset v(W).$$
+	If $v(W)\subset \left \langle v(X,Y):(X,Y)\in K\right \rangle$, then
+	$$\left \langle v(X',Y'):X'\in U\setminus \{W\},Y'\notin U\setminus \{W\}\right \rangle$$
+	the subspace spanned by the channels in cut $U\setminus \{W\}$, is contained by $\left \langle v(X,Y):(X,Y)\in K\right \rangle$. This implies
+	$$\text{dim}(U\setminus \{W\})\leq\text{dim}(U)<f$$
+	a contradiction.
+	\par Therefore, for all $W\in B$, $v(W)\nsubset \left \langle v(X,Y):(X,Y)\in K\right \rangle$. For all $(W,Y)\in K$, since
+	\begin{align*}
+	&\left \langle v(X,Z):(X,Z)\in K\setminus {(W,Y)}\right \rangle \subset \left \langle v(X,Y):(X,Y)\in K\right \rangle, \\
+	&v(W)\nsubset \left \langle v(X,Y):(X,Y)\in K\right \rangle
+	\end{align*}
+	implies
+	$$v(W)\nsubset \left \langle v(X,Z):(X,Z)\in K \setminus\{(W,Y)\}\right \rangle.$$
+	Then, by the definition of a generic LCM, ${v(X,Y):(X,Y)\in K}$ is a collection of vectors such that $\text{dim}(U)=\text{min}(|K|,d)$. Finally, by the Max-Flow Min-Cut Theorem, $|K|\geq f$, and since $d\geq f,\text{dim}(U)\geq f$. This is a contradiction to the assumption that $U\in A$. The theorem is proved.
 \end{proof}
+\par An LCM for which $\text{dim}(v(T))=\text{maxflow}(T)$ for all $T$ provides a way for broadcasting a message generated at the source $S$ for which every nonsource node $T$ receives the message at rate equal to $\text{maxflow}(T)$. This is illustrated by the next example,which is based upon the assumption that the base field of $\Omega$ is an infinite field or a sufficiently large finite field. In this example, we employ a technique which is justified by the following lemma.
+\begin{lemm}
+	Let $X$, $Y$ and $Z$ be nodes such that $\text{maxflow}(X)=i,\text{maxflow}(Y)=j$, and $\text{maxflow}(Z)=k$, where $i\leq j$ and $i>k$. By removing any edge $UX$ in the graph, $\text{maxflow}(X)$ and $\text{maxflow}(Y)$ are reduced by at most $1$, and $\text{maxflow}(Z)$ remains unchanged.
+\end{lemm}
+\begin{proof}
+	By removing an edge $UX$, the value of a cut $C$ between the source $S$ and node $X$(respectively, node $Y$) is reduced by $1$ if edge $UX$ is in $C$, otherwise, the value of $C$ is unchanged. By the Max-Flow Min-Cut Theorem, we see that $\text{maxflow}(X)$ and $\text{maxflow}(Y)$ are reduced by at most $1$ when edge $UX$ is removed from the graph. Now consider the value of a cut $C$ between the source $S$ and node $Z$. If $C$ contains node $X$, then edge $UX$ is not in $C$, and, therefore, the value of $C$ remains 	unchanged upon the removal of edge $UX$. If $C$ does not contain node $X$, then $C$ is a cut between the source $S$ and node $X$. By the Max-Flow Min-Cut Theorem, the value of $C$ is at least $i$. Then upon the removal of edge $UX$, the value of $C$ is lower-bounded by $i-1\geq k$. Hence, by the Max-Flow Min-Cut Theorem, $\text{maxflow}(Z)$ remains to be $k$ upon the removal of edge $UX$. The lemma is proved.
+\end{proof}
+\begin{exam}
+	Consider a communication network for which $\text{maxflow}(T)=4,3,\text{or}1$ for nodes $T$ in the network. The source $S$ is to broadcast 12 symbols $a_1, \dots, a_{12}$ taken from a sufficiently large base field $F$. (Note that 12 is the least common 	multiple of 4, 3, and 1.) Define the set
+	$$\Im_i=\{T:\text{maxflow}(T)=i\},\qquad \text{for }i=4,3,1.$$
+	For simplicity, we use the second as the time unit. We now describe how $a_1, \dots, a_{12}$ can be broadcast to the nodes in $\Im_4$, $\Im_3$, $\Im_1$	in 3, 4, and 12 s, respectively, assuming the existence of an LCM on the network for $d=4,3,1$.
+	\begin{itemize}
+		\item[a)] Let $v_1$ be an LCM on the network with $d=1$. Let 
+		$$\alpha_1=(a_1\ a_2\ a_3\ a_4)$$
+		$$\alpha_2=(a_5\ a_6\ a_7\ a_8)$$
+		and
+		$$\alpha_3=(a_9\ a_{10}\ a_{11}\ a_{12}).$$
+		In the first second, transmit $\alpha_1$ as the information vector using $v_1$, in the second second, transmit $\alpha_2$, and in the 	third second, transmit $\alpha_3$. After 3 s, all the nodes in $\Im_4$ can recover $\alpha_1$, $\alpha_2$, and $\alpha_3$. Throughout this example, we assume that all transmissions and computations are instantaneous.
+		\item[b)] Let $r$ be a vector in $F^4$ such that $\left \langle \{r\}\right \rangle$ intersects trivially with $v_1(T)$ for all $T$ in $\Im_3$, i.e.,$\langle \{r,v_1(T)\} \rangle=F^4$ for all $T$ in $\Im_3$. Such a vector $r$ can be found when $F$ is sufficiently large because there are a finite number of nodes in $\Im_3$. Define $b_1=\alpha_i r$ for $i=1,2,3$. Now remove incoming edges of nodes in $\Im_4$, if necessary, so that $\text{maxflow}(T)$ becomes 3 if $T$ is in $\Im_4$, otherwise, $\text{maxflow}(T)$ remains unchanged. This is possible by virtue of Lemma 3.4. Let $v_2$ be an LCM on the resulting network with $d=3$. Let $\beta=(b_1\ b_2\ b_3)$ and transmit $\beta$ as the information vector using $v_2$ in the fourth second. Then all the nodes in $\Im_3$ can recover $\beta$ and hence $\alpha_1$, $\alpha_2$, and $\alpha_3$.
+		\item[c)] Let $s_1$ and $s_2$ be two vectors in $F^3$ such that $\langle \{s_1,s_2\}\rangle$ intersects with $v_2(T)$ trivially for all $T$ in $\Im_1$, i.e., $\langle \{s_1,s_2,v_2(T)\}\rangle = F^3$ for all $T$ in $\Im_1$. Define $\gamma_i=\beta s_i$ for $i=1,2$. Now remove incoming edges of nodes in $\Im_4$ and $\Im_3$, if necessary, so that $\text{maxflow}(T)$ becomes 1 if $T$ is in $\Im_4$ or $\Im_3$, otherwise, $\text{maxflow}(T)$ remains unchanged. Again, this is possible by virtue of Lemma	3.4. Now let $v_3$ be an LCM on the resulting network with $d=1$. In the fifth and the sixth seconds, transmit $\gamma_1$ and $\gamma_2$ as the information vectors using $v_3$. Then all the	nodes in $\Im_1$ can recover $\beta$.
+		\item[d)] Let $t_1$ and $t_2$ be two vectors in $F^4$ such that $\langle \{t_1,t_2\}\rangle$ intersects with $\langle \{r,v_1(T)\}\rangle$ trivially for all $T$ in $\Im_1$, i.e., $\langle \{t_1,t_2,r, v_1(T)\}\rangle = F^4$ for all $T$ in $\Im_1$. Define $\delta_1=\alpha_1t_1$ and $\delta_2=\alpha_1t_2$. In the seventh and eighth seconds, transmit $\delta_1$ and $\delta_2$ as the information vectors using $v_3$. Since all the nodes in $\Im_1$ already knows $b_1$, upon receiving $\delta_1$ and $\delta_2$, $\alpha_1$ can then be recovered.
+		\item[e)] Define $\delta_3=\alpha_2t_1$ and $\delta_4=\alpha_2t_2$. In the nineth and tenth seconds, transmit $\delta_3$ and $\delta_4$ as the information vectors using $v_3$. Then $\alpha_2$ can be recovered by all the nodes in $\Im_1$.
+		\item[f)] Define $\delta_5=\alpha_3t_1$and $\delta_6=\alpha_3t_2$. In the eleventh and twelveth seconds, transmit $\delta_5$ and $\delta_6$ as the information vectors using $v_3$. Then $\alpha_3$ can be recovered by all the nodes in $\Im_1$.
+	\end{itemize}
+Let us now give a summary of the preceding scheme. In the $i\text{th}$ second for $1=1,2,3,$ via the generic LCM $v_1$, each node in $\Im_4$ receives all four dimensions of $\alpha_i$, each node in $\Im_3$ receives three dimensions of $\alpha_i$, and each node in $\Im_1$ receives one dimension of $\alpha_1$. In the fourth second, via the generic LCM $v_2$, each node in $\Im_3$ receives the vector $\beta$, which provides the three missing dimensions of $\alpha_1$, $\alpha_2$, and $\alpha_3$(one dimension for each) during the first 3 s of multicast by $v_1$. At the same time, each node in $\Im_1$receives one dimension of $\beta$. Now, in order to recover $\beta$, each node in $\Im_1$ needs to receive the two missing dimensions of $\beta$ during the fourth second. This is achieved by the generic LCM $v_3$ in the fifth and sixth seconds. So far, each node in $\Im_1$ has received one dimension of $\alpha_i$ for $i=1,2,3$ via $v_1$ during the first 3 s, and one dimension of $\alpha_i$ for $i=1,2,3$ from $\beta$ via $v_2$ and $v_3$ during the fourth to sixth seconds. Thus, it remains to provide the six missing dimensions of $\alpha_1$, $\alpha_2$, and$\alpha_3$(two dimensions for each) to each node in $\Im_1$, and this is achieved in the seventh to the twelveth seconds via the generic LCM $v_3$.
+\end{exam}
+\begin{rema}
+	The scheme in Example 3.5 can readily be generalized to arbitrary sets of max-flow values. The details are omitted here.
+\end{rema}
+\par	
+In the scheme in Example 3.5, at the end of the 12-s session, each node receives a message of 12 symbols taken from the base field . Thus, the average information rate arriving at each node over the whole session is 1 symbol/s. The result in [1] asserts that this rate, which is the minimum of the individual max-flow bounds of all the nodes in the network, can be achieved. However, it is seen in our scheme that the nodes in $\Im_4$, $\Im_3$, $\Im_1$ can actually receive the whole message in the first 3, 4, and 12 s, respectively. In this sense, each node in our scheme can receive the message at rate equal to its individual max-flow bound. Thus, our result is somewhat stronger than that in [1]. However, our result does not mean that information can be multicast continually from the source to each node at rate equal to its individual max-flow bound.
+\par
+If it is not necessary for the nodes in $\Im_1$ to receive the message, i.e., the message is multicast to the nodes in $\Im_4$ and $\Im_3$ only, the session can be terminated after 4 s. Then the average information rate arriving at each node in $\Im_4$ and $\Im_3$ over the truncated session is 3 symbols/s, with the nodes in $\Im_4$ and $\Im_3$ receiving the whole message in the first 3 and 4 s, respectively.
+
+\section{THE TRANSMISSION SCHEME ASSOCIATED WITH AN LCM}\label{sec:scheme}
+
 \end{document}
