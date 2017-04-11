@@ -1,0 +1,179 @@
+\documentclass{IEEEtran}
+\usepackage[T1]{fontenc} % optional
+\usepackage{amsmath}
+\usepackage[cmintegrals]{newtxmath}
+\usepackage{bm} % optional
+\usepackage{graphicx}
+\usepackage{float}
+
+\newtheorem{prop}{Proposition}
+\newtheorem{theo}{Theorem}
+\newtheorem{nota}{Notation}
+\newtheorem{defi}{Definition}
+\newtheorem{conv}{Convention}
+\newtheorem{maxthe}{Max-Flow Min-Cut Theorem}
+\newtheorem{exam}{Example}
+\newtheorem{proof}{\hskip 2em Proof}
+\newtheorem{lemm}{Lemma}
+
+\begin{document}
+\title{Linear Network Coding}
+	\author{Shuo-Yen Robert Li,\ \IEEEmembership{Senior Member,IEEE,
+	} Raymond W. Yeung,\ \IEEEmembership{Fellow,IEEE,} and Ning Cai\\
+	Zhiwei Chen 1016041134
+	\thanks{Transcribed by Zhiwei Chen, April 8, 2017.}}
+\maketitle
+	
+
+\begin{abstract}
+	Consider a communication network in which certain source nodes multicast information to other nodes on the network in the multihop fashion where every node can pass on any of its received data to others. We are interested in how fast each node can receive the complete information, or equivalently, what the information rate arriving at each node is. Allowing a node to encode its received data before passing it on, the question involves optimization of the multicast mechanisms at the nodes. Among the simplest coding schemes is linear coding, which regards a block of data as a vector over a certain base field and allows a node to apply a linear transformation to a vector before passing it on. We formulate this multicast problem and prove that linear coding suffices to achieve the optimum, which is the max-flow from the source to each receiving 	node.
+\end{abstract}
+\begin{IEEEkeywords}
+	Coding, network routing, switching.
+\end{IEEEkeywords}
+
+\section{Introduction}\label{sec:introduction}
+\IEEEPARstart{D}{efine} a \emph{communication network} as a pair $(G,S)$, where $S$ is a finite directed multigraph and $S$ is the unique node in $G$ without any incoming edges. A directed edge in $G$ is called a channel in the communication network $(G,S)$, The special node $S$ is called the source, while every other node may serve as a sink as we shall explain.
+\par
+A channel in graph $G$ represents a noiseless communication link on which one unit of information (e.g., a bit) can be transmitted per unit time. The multiplicity of the channels from a node $X$ to another node Y represents the capacity of direct transmission from $X$ to $Y$. In other words, every single channel has unit capacity.
+\par
+At the source $S$, a finite amount of information is generated and multicast to other nodes on the network in the multihop fashion where every node can pass on any of its received data to other nodes. At each nonsource node which serves as a sink, the complete information generated at $S$ is recovered. We are naturally interested in how fast each sink node can receive the complete information.
+\par
+As an example, consider the multicast of two data bits, $b_1$ and $b_2$, from the source $S$ in the communication network depicted by Fig. 1(a) to both nodes $Y$ and $Z$. One solution is to let the channels $ST$, $TY$, $TW$, and $WZ$ carry the bit $b_1$ and channels $SU$, $UZ$, $UW$, and $WY$ carry the bit $b_2$. Note that in this scheme, an intermediate node sends out a data bit only if it receives the same bit from another node. For example, the node $T$ receives the bit $b_1$ and sends a copy on each of the two channels $TY$ and $TW$. Similarly, the node $U$ receives the bit $b_2$ and sends a copy into each of the two channels $UW$ and $UZ$. In our model, we assume that there is no processing delay at the intermediate nodes.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=2.5in]{fig1}
+	\caption{Two communication networks.}
+	\label{fig1}
+\end{figure}
+\par
+Unlike a conserved physical commodity, information can be replicated or coded. Introduced in [1] (see also [5, Ch. 11]), the notion of network coding refers to coding at the intermediate nodes when information is multicast in a network. Let us now illustrate network coding by considering the communication network depicted by Fig. 1(b). In this network, wewant to multicast two bits $b_1$ and $b_2$ from the source $S$ to both the nodes $Y$ and $Z$. A solution is to let the channels $ST$, $TW$, $TY$ carry the bit $b_1$, channeels $SU$, $UW$, $UZ$ carry the bit $b_2$, and channels $WX$, $XY$, $XZ$ carry the exclusive-or $b_1 \oplus b_2$. Then, the node $Y$ receives $b_1$ and $b_1 \oplus b_2$, from which the bit $b_2$ can be decoded. Similarly, the node $Z$ can decode the bit $b_1$ from and $b_2$.The coding/decoding scheme is assumed to have been agreed upon beforehand.
+\par
+It is not difficult to see that the above scheme is the only solution to the problem. In other words, without network coding, it is impossible to multicast two bits per unit time from the source $S$ to both the nodes $Y$ and $Z$. This shows the advantage of network coding. In fact, replication of data can be regarded as a special case of network coding.
+\par
+As we have pointed out, the natures of physical commodities and information are very different. Nevertheless, both of them are governed by certain laws of flow. For the network flow of a physical commodity, we have the following.
+\begin{itemize}
+	\item The law of commodity flow: The total volume of the outflow from a nonsource node cannot exceed the total volume of the inflow.
+\end{itemize}
+The counterpart for a communication network is as follows.
+\begin{itemize}
+	\item The law of information flow: The content of any information flowing out of a set of nonsource nodes can be derived from the accumulated information that has flown into the set of nodes.
+\end{itemize}
+After all, information replication and coding do not increase the information content.
+\par
+The information rate from the source to a sink can potentially become higher and higher when the permitted class of coding schemes is wider and wider. However, the law of information flow limits this information rate to the max-flow (i.e., the maximum commodity flow) from the source to that particular sink for a very wide class of coding schemes. The details are given in [1].
+\par
+It has been proved in [1] that the information rate from the source to a set of nodes can reach the minimum of the individual max-flow bounds through coding. In the present paper, we shall prove constructively that by linear coding alone, the rate at which a message reaches each node can achieve the individual max-flow bound. (This result is somewhat stronger than the one in [1]. Please refer to the example in Section III.) More explicitly, we treat a block of data as a vector over a certain base field and allow a node to apply a linear transformation to a vector before passing it on. A preliminary version of this paper has appeared in the conference proceedings [3].
+\par
+The remainder of the paper is organized as follows. In Section II, we introduce the basic notions, in particular, the notion of a \emph{linear-code multicast} (LCM). In Section III, we show that with a "generic" LCM, every node can simultaneously receive information from the source at rate equal to its max-flow bound. In Section IV, we describe the physical implementation of an LCM first when the network is acyclic and then when the network is cyclic. In Section V, we present a greedy algorithm for constructing a generic LCM for an acyclic network. The same algorithm can be applied to a cyclic network by expanding the network into an acyclic network. This results in a "timevarying" LCM, which, however, requires high complexity in implementation. In Section VI, we introduce the time-invariant LCM(TILCM) and present a heuristic for constructing a generic TILCM. Section VII presents concluding remarks.
+
+\section{BASIC NOTIONS}\label{sec:basic notions}
+\par
+In this section, we first introduce some graph-theoretic terminology and notations which will be used throughout the paper. Then we will introduce the notion of an LCM, an abstract algebraic description of a linear code on a communication network.
+\par
+\emph{Convention}: The generic notation for a nonsource node will be $T$, $U$, $W$, $X$, $Y$, or $Z$. The notation $XY$ will stand for any channel from $X$ to $Y$.
+\par
+\emph{Definition}Over a communication network a \emph{flow} from the source to a nonsource node $T$ is a collection of channels, to be called the busy channels in the flow, such that
+\begin{itemize}
+	\item[1)] the subnetwork defined by the busy channels is acyclic, i.e., the busy channels do not form directed cycles;
+	\item[2)] for any node other than $S$ and $T$, the number of incoming busy channels equals the number of outgoing 	busy channels;
+	\item[3)] the number of outgoing busy channels from $S$ equals the number of incoming busy channels to $T$.
+\end{itemize}
+\par
+In other words, a flow is an \emph{acyclic} collection of channels that abides by the law of commodity flow. The number of outgoing busy channels $S$ from will be called the volume of the flow. The node $T$ is called the \emph{sink} of the flow. All the channels on the communication network that are not busy channels of the flow are called the \emph{idle} channels with respect to the flow.
+
+\begin{prop}
+The busy channels in a flow with volume $f$ can be partitioned into $f$ simple paths from the source to the sink.
+\end{prop}
+\par The proof of this proposition is omitted.
+\begin{nota}
+	For every nonsource node $T$ on a network $(G,S)$, the maximum volume of a flow from the source to $T$ is denoted as $\text{maxflow}_G(T)$, or simply $\text{maxflow}(T)$when there is no ambiguity.
+\end{nota}
+\begin{defi}
+	A cut on a communication network $(G,S)$, between the source and a nonsource node $(T)$ means a collection $C$ of nodes which includes $S$ but not $T$. A channel $XY$ is said to be \emph{in} the cut $C$ if $X \in C$ and $y \notin C$. The number of channels in a cut is called the \emph{value} of the cut.
+\end{defi}
+\par
+The well-known Max-Flow Min-Cut Theorem (see, for example, [2, Ch. 4, Theorem 2.3]) still applies despite the acyclic restriction in the definition of a flow.
+\begin{maxthe}
+	For every nonsource node $T$, the minimum value of a cut between the source and a node $T$ is equal to $\text{maxflow}(T)$.
+\end{maxthe}
+
+We are now ready to define a linear code multicast.
+\begin{nota}
+	Let $d$ be the maximum of $\text{maxflow}(T)$ over all $T$. Throughout Sections II–V, the symbol $\Omega$ will denote a fixed-dimensional vector space over a sufficiently large base field.
+\end{nota}
+\begin{conv}
+	The information unit is taken as a symbol in the base field. In other words, $1$ symbol in the base field can be transmitted on a channel every unit time.
+\end{conv}
+
+\begin{defi}
+	A \emph{linear-code multicast (LCM)} $v$ on a communication network $(G,S)$ is an assignment of a vector space $v(X)$	to every node $X$ and a vector $v(XY)$ to every channel $XY$ such that
+	\begin{itemize}
+		\item[1)] $v(S)=\Omega$;
+		\item[2)] $v(XY) \in v(X) \text{for every channel } XY$;
+		\item[3)] for any collection $\wp$ of nonsource nodes in the network\\
+		$ \left \langle \left \{ v(T):T\in \wp \right \} \right \rangle=\left \langle \left \{ v(XY):X\notin \wp,Y\in \wp \right \} \right \rangle$.
+	\end{itemize}
+\end{defi}
+\par 
+The notation $\left \langle \bullet \right \rangle $ is for linear span. Condition 3) says that the vector spaces $v(T)$ on all nodes $T$ inside $\wp$ together have the same linear span as the vectors $v(XY)$ on all channels $XY$ to nodes in $\wp$ from outside of $\wp$. Conditions 2) and 3) show that an LCM abides by the law of information flow stated in Section I. The vector $v(XY)$ assigned to every channel $XY$ may be identified with a $d$-dimensional \emph{column} vector over the base field of $\Omega$ by choosing a basis for $\Omega$.
+\par 
+Applying Condition 3) to the collection of a single nonsource node $T$, the space $v(T)$ is linearly spanned by vectors $v(XT)$ on all incoming channels $XY$ to $T$. This shows that an LCM on a communication network is completely determined by the vectors it assigns to the channels. Together with Condition 2), we have
+\begin{itemize}
+	\item[4)] The vector assigned to an outgoing channel from $T$ must be a linear combination of the vectors assigned to the incoming	channels of $T$.
+\end{itemize}
+Condition 4) may be regarded as the "\emph{law of information flow at a node.}" However, unlike in network flow theory, the law of information flow being observed for every single node does not necessarily imply it being observed for every set of nodes when the network contains a directed cycle. A counterexample will appear in Section IV.
+\par 
+An LCM $v$ specifies a mechanism for data transmission over the network as follows. We encode the information to be transmitted from $S$ as a $d$-dimensional \emph{row} vector, which we shall call the \emph{information vector}. Under the transmission mechanism prescribed by the LCM $v$, the data flowing on a channel $XY$ is the matrix product of the information (row) vector with the (column) vector $v(XY)$. In this way, the vector $v(XY)$ acts as the kernel in the linear encoder for the channel $XY$. As a direct consequence of the definition of an LCM, the vector assigned to an outgoing channel from a node $X$ is a linear combination of the vectors assigned to the incoming channels to $X$. Consequently, the data sent on an outgoing channel from a node $X$ is a linear combination of the data sent on the incoming channels to $X$.
+\par 
+Under this mechanism, the amount of information reaching a node $T$ is given by the dimension of the vector space $v(T)$ when the LCM $v$ is used. The physical realization of this mechanism will be discussed in Section IV.
+\begin{exam}
+	Consider the multicast of two bits, $b_1$ and $b_2$, from $S$ to $Y$ and $Z$ in the communication network in Fig. 1(b).This is achieved with the LCM $v$ specified by
+	$$ v(ST)=v(TW)=v(TY)=\begin{pmatrix} 1 \\ 0 \end{pmatrix}$$
+	$$ v(SU)=v(UW)=v(UZ)=\begin{pmatrix} 0 \\ 1 \end{pmatrix}$$
+	and
+	$$ v(WX)=v(XY)=v(XZ)=\begin{pmatrix} 1 \\ 1 \end{pmatrix}$$
+	The data sent on a channel is the matrix product of the \emph{row} vector $(b_1 \ b_2) $with the \emph{column} vector assigned to that channel by $v$. For instance, the data sent on the channel $WX$ is $b_1+b_2$. Note that, in the special case when the base field of $\Omega$ is $GF(2)$, the vector $b_1+b_2$ reduces to the exclusive-OR in an earlier $b_1\oplus b_2$ example.
+\end{exam}
+\begin{prop}
+	For every LCM $v$ on a network, for all nodes $T$
+	$$ \text{dim}(v(T)) \leq \text{maxflow}(T).$$
+\end{prop}
+\begin{proof}
+	Fix a nonsource node $T$ and \emph{any}cut $C$ between the source and $T$
+	$$v(T)\in \left \langle v(Z):Z\notin C \right \rangle = \left \langle v(YZ):Y\in C \text{and} Z\notin C \right \rangle.$$
+	Hence, $\text{dim}(v(T))\leq \text{dim}(\left \langle v(YZ):Y\in C \text{and} Z\notin C \right \rangle$, which is at most equal to the value of the cut. In particular,$\text{dim}(v(T))$ is upper-bounded by the minimum value of a cut between $S$ and $T$, which by the Max-Flow Min-Cut Theorem is equal to $\text{maxflow}(T)$.
+\end{proof}
+\par 
+This corollary says that $\text{maxflow}(T)$ is an upper bound on the amount of information received by $T$ when an LCM is used.
+
+\section{ACHIEVING THE MAX-FLOW BOUND THROUGH A GENERIC LCM}\label{sec: ACHIEVING}
+\par
+In this section, we derive a sufficient condition for an LCM $v$ to achieve the max-flow bound on $\text{dim}(v(T))$ in Proposition 2.3.
+\begin{defi}
+	An LCM $v$ on a communication network is said to be \emph{generic} if the following condition holds for any collection of channels $X_1Y_1, X_2Y_2, \dots X_mY_m$ for $1\leq m \leq d: (*)v(X_k)\nsubset \left \langle \left \{ v(X_jY_j):j \neq k\right \} \right \rangle$ for $1\leq k \leq m$ if and only if the vector $v(X_1Y_1), v(X_2Y_2), \dots v(X_mY_m)$ are linearly independent.
+\end{defi}
+\par
+if $v(X_1Y_1), v(X_2Y_2), \dots v(X_mY_m)$ are linearly independent, then $v(X_k)\nsubset \left \langle \left \{ v(X_jY_j):j \neq k\right \} \right \rangle$ since $v(X_kY_k)\in v(X_k)$. A generic LCM requires that the converse is also true. In this sense, a generic LCM assigns vectors which are as linearly independent as possible to the channels.
+
+\begin{exam}
+	With respect to the communication network in Fig. 1(b), the LCM $v$ in Example 2.2 is a generic LCM. However, the LCM $u$ defined by
+	$$ u(ST)=u(TW)=u(TY)=\begin{pmatrix} 1 \\ 0 \end{pmatrix}$$
+	$$ u(SU)=u(UW)=u(UZ)=\begin{pmatrix} 0 \\ 1 \end{pmatrix}$$
+	and
+	$$ u(WX)=u(XY)=u(XZ)=\begin{pmatrix} 1 \\ 0 \end{pmatrix}$$
+	is not generic. This is seen by considering the set of channels ${ST,WX}$ where
+	$$u(S)=u(W)=\left \langle \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \begin{pmatrix} 0 \\ 1 \end{pmatrix} \right \rangle$$
+	Then $u(S)\nsubset \left \rangle u(WX) \right \rangle$ and $u(W)\nsubset \left \rangle u(ST) \right \rangle$, but $u(ST)$ and $u(WX)$ are not linearly independent. Therefore, is not generic.
+\end{exam}
+\begin{lemm}
+	Let $v$ be a generic LCM. Any collection of channels $X_1Y_1, X_2Y_2, \dots X_mY_m$ from a node $X$ with $m \leq \text{dim}(v(X))$ must be assigned linearly independent vectors by $v$.
+\end{lemm}
+\begin{theo}
+	If $v$ is a generic LCM on a communication network, then for all nodes $T$
+	$$\text{dim}(v(T))=\text{maxflow}(T).$$
+\end{theo}
+\begin{proof}
+	Consider a node $T$ not equal to $S$. Let $f$ be the common value of $\text{maxflow){T}}$ and the minimum value of a cut between $S$ and $T$. The inequality $\text{dim}(v(T))\leq f$ follows from Proposition 2.3. Thus, we only have to show that $\text{dim}(v(T))\geq f$
+\end{proof}
+\end{document}
